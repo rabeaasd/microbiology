@@ -1,27 +1,16 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { QuizHeader } from "@/components/quiz/quiz-header"
 import { QuestionCard } from "@/components/quiz/question-card"
 import { medicalTerminologyComprehensive } from "@/lib/quiz-data"
 
 export default function Home() {
   const questions = Object.entries(medicalTerminologyComprehensive)
-  const [currentIndex, setCurrentIndex] = useState<number | null>(null)
+  const [currentIndex, setCurrentIndex] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   const [showFeedback, setShowFeedback] = useState(false)
   const [score, setScore] = useState(0)
-
-  useEffect(() => {
-    if (currentIndex === null) {
-      const randomIndex = Math.floor(Math.random() * questions.length)
-      setCurrentIndex(randomIndex)
-    }
-  }, [])
-
-  if (currentIndex === null) {
-    return null // Prevent rendering until random index is set
-  }
 
   const currentQuestion = questions[currentIndex]
   const [, questionData] = currentQuestion
@@ -44,8 +33,8 @@ export default function Home() {
   }
 
   const handleNext = () => {
-    const randomIndex = Math.floor(Math.random() * questions.length)
-    setCurrentIndex(randomIndex)
+    const nextIndex = (currentIndex + 1) % questions.length
+    setCurrentIndex(nextIndex)
     setSelectedAnswer(null)
     setShowFeedback(false)
   }
