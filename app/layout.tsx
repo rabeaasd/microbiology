@@ -1,27 +1,26 @@
-import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
-import './globals.css'
+import "./globals.css"
+import { Inter } from "next/font/google"
+import type { Metadata } from "next"
 
-const _geist = Geist({ subsets: ["latin"] });
-const _geistMono = Geist_Mono({ subsets: ["latin"] });
+// ✅ Use Inter (clean, modern Google font)
+const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.app',
+  title: "Medical Terminology Quiz",
+  description: "Test your knowledge of medical terms interactively.",
 }
 
+// ✅ Root layout
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   return (
     <html lang="en">
-      <body className={`font-sans antialiased`}>
+      {/* Apply the font class to the body */}
+      <body className={inter.className}>
         {children}
-        <Analytics />
       </body>
     </html>
   )
