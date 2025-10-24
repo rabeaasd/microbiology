@@ -1,4 +1,51 @@
-export const medicalTerminologyComprehensive = {
+type Options = Record<string, string>;
+
+interface QuestionItem {
+  question: string;
+  options: Options;
+  answer: string;
+}
+
+type MedicalTerminology = Record<string, QuestionItem>;
+
+/**
+ * Utility to shuffle answers while preserving the correct one
+ */
+function shuffleOptions(data: MedicalTerminology): MedicalTerminology {
+  const shuffled: MedicalTerminology = {};
+
+  for (const key in data) {
+    const item = data[key];
+    const entries = Object.entries(item.options);
+
+    // Fisher–Yates shuffle
+    for (let i = entries.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [entries[i], entries[j]] = [entries[j], entries[i]];
+    }
+
+    const newOptions: Options = {};
+    let newAnswer = "";
+
+    entries.forEach(([oldKey, value], index) => {
+      const newKey = String.fromCharCode(65 + index); // A, B, C, D...
+      newOptions[newKey] = value;
+      if (oldKey === item.answer) {
+        newAnswer = newKey;
+      }
+    });
+
+    shuffled[key] = {
+      question: item.question,
+      options: newOptions,
+      answer: newAnswer,
+    };
+  }
+
+  return shuffled;
+}
+
+const medicalTerminologyComprehensive: MedicalTerminology = shuffleOptions({
    "vital_signs":{
       "question":"What are vital signs?",
       "options":{
@@ -4138,5 +4185,7 @@ export const medicalTerminologyComprehensive = {
          "D":"Produce more mucus"
       },
       "answer":"B"
-   }
-}
+  },
+});
+
+export { medicalTerminologyComprehensive };
