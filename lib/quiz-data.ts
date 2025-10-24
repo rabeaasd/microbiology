@@ -9,43 +9,52 @@ interface QuestionItem {
 type MedicalTerminology = Record<string, QuestionItem>;
 
 /**
- * Utility to shuffle answers while preserving the correct one
+ * Shuffle an array in-place (Fisher–Yates)
  */
-function shuffleOptions(data: MedicalTerminology): MedicalTerminology {
-  const shuffled: MedicalTerminology = {};
+function shuffleArray<T>(array: T[]): T[] {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
 
-  for (const key in data) {
-    const item = data[key];
-    const entries = Object.entries(item.options);
+/**
+ * Shuffle answers and question order
+ */
+function shuffleQuestions(data: MedicalTerminology): QuestionItem[] {
+  // Convert object → array for shuffling questions
+  const entries = Object.entries(data);
 
-    // Fisher–Yates shuffle
-    for (let i = entries.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [entries[i], entries[j]] = [entries[j], entries[i]];
-    }
+  // Shuffle questions
+  const shuffledQuestions = shuffleArray(entries).map(([key, item]) => {
+    // Shuffle answer options
+    const optionEntries = Object.entries(item.options);
+    const shuffledOptions = shuffleArray(optionEntries);
 
     const newOptions: Options = {};
     let newAnswer = "";
 
-    entries.forEach(([oldKey, value], index) => {
+    shuffledOptions.forEach(([oldKey, text], index) => {
       const newKey = String.fromCharCode(65 + index); // A, B, C, D...
-      newOptions[newKey] = value;
+      newOptions[newKey] = text;
       if (oldKey === item.answer) {
         newAnswer = newKey;
       }
     });
 
-    shuffled[key] = {
+    return {
       question: item.question,
       options: newOptions,
       answer: newAnswer,
     };
-  }
+  });
 
-  return shuffled;
+  return shuffledQuestions;
 }
 
-const medicalTerminologyComprehensive: MedicalTerminology = shuffleOptions({
+const baseQuestions: MedicalTerminology = {
    "vital_signs":{
       "question":"What are vital signs?",
       "options":{
@@ -4186,6 +4195,6 @@ const medicalTerminologyComprehensive: MedicalTerminology = shuffleOptions({
       },
       "answer":"B"
   },
-});
-
-export { medicalTerminologyComprehensive };
+  };
+export const medicalTerminologyComprehensive: QuestionItem[] =
+  shuffleQuestions(baseQuestions);
