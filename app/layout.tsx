@@ -6,8 +6,8 @@ import type { Metadata } from "next"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Medical Terminology Quiz",
-  description: "Test your knowledge of medical terms interactively.",
+  title: "Microbiology Quiz",
+  description: "Test your knowledge of microbiology interactively.",
 }
 
 // ✅ Root layout
